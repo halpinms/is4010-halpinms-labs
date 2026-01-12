@@ -1,0 +1,33 @@
+name: Week 02 - AI-Assisted Development
+on:
+  push:
+    paths:
+      - 'week02/**'
+      - '.github/workflows/week02.yml'
+  pull_request:
+    paths:
+      - 'week02/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Check required files
+        run: |
+          if [ -f week02/lab02.py ]; then
+            echo "✓ lab02.py found"
+            python week02/lab02.py
+          else
+            echo "✗ lab02.py not found"
+            exit 1
+          fi
+          if [ -f week02/lab02_prompts.md ]; then
+            echo "✓ lab02_prompts.md found"
+          else
+            echo "✗ lab02_prompts.md not found"
+            exit 1
+          fi

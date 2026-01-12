@@ -1,0 +1,21 @@
+name: Week 08 - Python
+on:
+  push:
+    paths:
+      - 'week08/**'
+  pull_request:
+    paths:
+      - 'week08/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Week 08 tests
+        run: pytest week08/tests/ -v

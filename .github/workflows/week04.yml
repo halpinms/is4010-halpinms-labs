@@ -1,0 +1,22 @@
+name: Week 04 - Data Structures
+on:
+  push:
+    paths:
+      - 'week04/**'
+      - '.github/workflows/week04.yml'
+  pull_request:
+    paths:
+      - 'week04/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Week 04 tests
+        run: pytest week04/tests/ -v

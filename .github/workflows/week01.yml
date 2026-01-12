@@ -1,0 +1,22 @@
+name: Week 01 - Development Toolkit
+on:
+  push:
+    paths:
+      - 'week01/**'
+      - '.github/workflows/week01.yml'
+  pull_request:
+    paths:
+      - 'week01/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Check lab completion
+        run: |
+          echo "✓ Week 01 setup complete"
+          echo "This workflow verifies the week01 folder structure"

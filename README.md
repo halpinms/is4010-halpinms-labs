@@ -14,25 +14,29 @@ This repository is the template for all IS4010 lab assignments. You will fork th
 
 ```
 is4010-course/
-├── module01/          # Week 1: Development Toolkit Setup
-├── module02/          # Week 2: AI-Assisted Development
-├── module03/          # Week 3: Python Basics + Testing
-├── module04/          # Week 4: Data Structures
-├── module05/          # Week 5: Functions and Error Handling
-├── module06/          # Week 6: Object-Oriented Programming
-├── module07/          # Week 7: Data and APIs
-├── module08/          # Week 8: Python CLI Application
-├── module09/          # Week 9: Rust Basics
-├── module10/          # Week 10: Ownership and Borrowing
-├── module11/          # Week 11: Structuring Code and Data
-├── module12/          # Week 12: Generics and Traits
-├── module13/          # Week 13: Idiomatic Rust
-├── module14/          # Week 14: Rust CLI Application
-├── resources/      # Setup guides and documentation
-│   └── SETUP_GUIDE.md  # Comprehensive installation guide
-├── .github/        # GitHub Actions CI/CD workflows
-├── requirements.txt    # Python dependencies
-└── README.md       # This file
+├── week01/            # Development Toolkit Setup
+├── week02/            # AI-Assisted Development
+├── week03/            # Python Basics + Testing
+├── week04/            # Data Structures
+├── week05/            # Functions and Error Handling
+├── week06/            # Object-Oriented Programming
+├── week07/            # Data and APIs
+├── week08/            # Python CLI Application
+├── week09/            # Rust Basics
+├── week10/            # Ownership and Borrowing
+├── week11/            # Structuring Code and Data
+├── week12/            # Generics and Traits
+├── week13/            # Idiomatic Rust
+├── week14/            # Rust CLI Application
+├── resources/         # Setup guides and documentation
+│   ├── SETUP_GUIDE.md
+│   ├── TROUBLESHOOTING.md
+│   └── lecture-notes/
+├── .github/           # GitHub Actions CI/CD workflows
+│   └── workflows/
+│       ├── week01.yml through week14.yml
+├── requirements.txt   # Python dependencies
+└── README.md          # This file
 ```
 
 ## Getting Started
@@ -88,34 +92,39 @@ cargo --version
 
 Each week, you'll complete a lab assignment:
 
-1. **Read the lab README** in the corresponding `labXX/` folder
-2. **Write your code** following the lab instructions
-3. **Run tests locally** to verify your solution
-4. **Commit and push** your changes to GitHub
-5. **Verify CI/CD** - Check that GitHub Actions shows a green checkmark
+1. **Read the week overview** in `weekXX/README.md`
+2. **Read detailed instructions** in `weekXX/labXX.md`
+3. **Write your code** following the lab instructions
+4. **Run tests locally** to verify your solution (weeks 3+)
+5. **Commit and push** your changes to GitHub
+6. **Verify CI/CD** - Check that GitHub Actions shows a green checkmark
 
-### Example: Completing Lab 03
+### Example: Completing Week 03 Lab
 
 ```bash
-# Navigate to lab folder
-cd module03/
+# Navigate to week folder
+cd week03/
+
+# Read overview and instructions
+cat README.md      # Brief overview
+cat lab03.md       # Detailed instructions
 
 # Write your code
-# - Create module03.py with your solution
-# - Create tests/test_module03.py with tests
+# - Create lab03.py with your solution
+# - Tests are provided in tests/test_lab03.py
 
 # Run tests locally
 pytest tests/ -v
 
 # Commit your work
-git add module03/
-git commit -m "Complete Lab 03: Python Basics"
+git add week03/
+git commit -m "Complete Week 03 lab"
 git push origin main
 
 # Check GitHub Actions
 # - Go to your repository on GitHub
 # - Click "Actions" tab
-# - Verify "Lab 03 - Python Basics" workflow shows green checkmark ✓
+# - Verify "Week 03 - Python Basics" workflow shows green checkmark ✓
 ```
 
 ## CI/CD and Grading
@@ -174,7 +183,7 @@ You are **encouraged** to use AI coding assistants:
 
 **Academic Integrity Requirements**:
 - You must **understand** all code you submit
-- Document AI assistance in `module02/` and throughout
+- Document AI assistance in `week02/` and throughout
 - The goal is **learning**, not just completion
 
 ### Testing Requirements

@@ -1,0 +1,22 @@
+name: Week 03 - Python Basics
+on:
+  push:
+    paths:
+      - 'week03/**'
+      - '.github/workflows/week03.yml'
+  pull_request:
+    paths:
+      - 'week03/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Week 03 tests
+        run: pytest week03/tests/ -v

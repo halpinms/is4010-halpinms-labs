@@ -1,0 +1,21 @@
+name: Week 09 - Rust
+on:
+  push:
+    paths:
+      - 'week09/**'
+  pull_request:
+    paths:
+      - 'week09/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Run cargo test
+        run: cd week09 && cargo test --verbose
+      - name: Run cargo fmt check
+        run: cd week09 && cargo fmt --check
+      - name: Run cargo clippy
+        run: cd week09 && cargo clippy -- -D warnings
