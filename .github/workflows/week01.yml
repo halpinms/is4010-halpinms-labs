@@ -1,5 +1,6 @@
 name: Week 01 - Development Toolkit
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'week01/**'
@@ -16,7 +17,26 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - name: Check lab completion
+
+      - name: Check if hello.py exists
+        id: check_file
         run: |
-          echo "✓ Week 01 setup complete"
-          echo "This workflow verifies the week01 folder structure"
+          if [ -f "week01/hello.py" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run hello.py
+        if: steps.check_file.outputs.exists == 'true'
+        run: |
+          echo "✓ hello.py found"
+          python week01/hello.py
+          echo "✓ Week 01 setup verification complete"
+
+      - name: Hello.py not found
+        if: steps.check_file.outputs.exists == 'false'
+        run: |
+          echo "❌ week01/hello.py not found"
+          echo "Create this file as described in lab01.md"
+          exit 1
