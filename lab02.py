@@ -19,13 +19,11 @@ def factorial(n):
     1
     """
     if n < 0:
-        raise ValueError("n must be non-negative")
-    if n == 0 or n == 1:
+        raise ValueError("Input must be a non-negative integer.")
+    if n == 0:
         return 1
-    result = 1
-    for i in range(2, n + 1):
-        result *= i
-    return result
+    else:
+        return n * factorial(n-1)
 
 
 def is_prime(number):
@@ -53,13 +51,9 @@ def is_prime(number):
     >>> is_prime(1)
     False
     """
-    if number <= 1:
+    if number < 2:
         return False
-    if number == 2:
-        return True
-    if number % 2 == 0:
-        return False
-    for i in range(3, int(number ** 0.5) + 1, 2):
+    for i in range(2, int(number ** 0.5) + 1):
         if number % i == 0:
             return False
     return True
@@ -85,4 +79,4 @@ def reverse_string(s):
     >>> reverse_string("Python")
     'nohtyP'
     """
-    return s[::-1]
+    pass
