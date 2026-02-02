@@ -85,7 +85,8 @@ def generate_mad_lib(adjective, noun, verb):
     """
     # TODO: Replace this with your creative story implementation
     # Must use f-string formatting and include all three parameters
-    pass
+    
+    
 ```
 
 **💡 Tips for success:**
