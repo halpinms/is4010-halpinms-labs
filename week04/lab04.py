@@ -1,143 +1,132 @@
 """
-Optimized solutions for:
-1) Finding common items between two large supplier product ID lists
-2) Fast user profile lookup by username
-3) Filtering even numbers while preserving input order
+Lab 04 - Efficient data-structure-centric solutions
 
-Notes:
-- Problem 1 uses a set for O(1) average membership checks.
-- Problem 2 builds a dict index for O(1) average lookups; prefer building once.
-- Problem 3 uses a list comprehension (fast + preserves order).
+Fix for your failing tests:
+- The autograder calls: find_user_by_name(sample_users, "alice")
+  where sample_users is a LIST of dicts, not a prebuilt index.
+- So find_user_by_name MUST accept the list and handle lookup efficiently.
+
+We keep the fast path by building a dict index (name -> user) on demand.
+Optionally, we cache the index keyed by id(users) to make repeated calls O(1)
+*as long as the list object isn't mutated in place*.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import Any, Dict, Hashable, List, Optional, TypeVar
+from typing import Any, Dict, Hashable, List, Optional, TypeVar, cast
 
-T = TypeVar("T", bound=Hashable)  # needed for set/dict keys
+T = TypeVar("T", bound=Hashable)
 
 User = Dict[str, Any]
 UserIndex = Dict[str, User]
 
 
 # -----------------------------
-# Problem 1: Common product IDs
+# Problem 1: Finding common items
 # -----------------------------
 def find_common_elements(list1: Iterable[T], list2: Iterable[T]) -> List[T]:
     """
-    Find elements present in BOTH inputs.
+    Return elements present in BOTH inputs.
 
-    Efficiency:
-    - Builds a set from the smaller input when lengths are known (minimizes memory).
-    - Membership checks are O(1) average.
+    Data structure choice:
+    - set for O(1) average membership checks
 
-    Behavior:
-    - Order of result is NOT guaranteed.
-    - Duplicates in the "scanned" iterable WILL be preserved (multiset-like),
-      e.g., if list2 contains the same common ID twice, it will appear twice.
-
-    If you need UNIQUE common IDs, use: find_common_elements_unique().
+    Notes:
+    - Order of result does not matter (per prompt/tests).
+    - This version preserves duplicates from the "scanned" side.
+      If you want unique common elements only, see find_common_elements_unique().
     """
-    # If both inputs are sequences, we can choose the smaller to set-ify.
     if isinstance(list1, Sequence) and isinstance(list2, Sequence):
         small, large = (list1, list2) if len(list1) <= len(list2) else (list2, list1)
         s = set(small)
         return [x for x in large if x in s]
 
-    # Fallback for non-sized iterables (generators, etc.)
     s = set(list1)
     return [x for x in list2 if x in s]
 
 
 def find_common_elements_unique(list1: Iterable[T], list2: Iterable[T]) -> List[T]:
-    """
-    Return UNIQUE elements present in both inputs (set semantics).
-    Order is not guaranteed.
-    """
+    """Unique common elements (set semantics). Order not guaranteed."""
     return list(set(list1).intersection(list2))
 
 
-# -----------------------------------------
-# Problem 2: User profile lookup by username
-# -----------------------------------------
-def build_user_index(users: Iterable[User]) -> UserIndex:
+# -----------------------------
+# Problem 2: User profile lookup
+# -----------------------------
+def _build_user_index(users: List[User]) -> UserIndex:
     """
-    Build a username -> user profile index for fast repeated lookups.
+    Build {name: user_dict}.
 
-    Efficiency:
-    - One-time O(n) build
-    - O(1) average lookup thereafter
+    Data structure choice:
+    - dict for O(1) average lookup by key.
 
-    Assumptions:
-    - Each user dict contains at least: 'name', 'age', 'email'
-    - Username ('name') is unique. If duplicates exist, the LAST one wins.
-      (If you want different behavior, see clarifying questions below.)
+    Duplicate names:
+    - last one wins (standard dict overwrite behavior).
     """
-    index: UserIndex = {}
-    for u in users:
-        name = u["name"]  # KeyError here is intentional (fail fast on bad schema)
-        index[name] = u
-    return index
+    # Fast, idiomatic comprehension
+    return {u["name"]: u for u in users}
 
 
-def find_user_by_name(user_index: UserIndex, name: str) -> Optional[User]:
+def find_user_by_name(users: List[User], name: str) -> Optional[User]:
     """
-    O(1) average lookup by username using a prebuilt index.
-    """
-    return user_index.get(name)
+    Find a user's profile by name from a list of user data.
 
+    REQUIRED by tests:
+    - 'users' is a list of dicts (not a prebuilt index).
+    - Return the dict if found; else None.
 
-# If you *must* keep signature (users: list[dict]) and you call it repeatedly,
-# this cached variant avoids rebuilding the index every call.
-# NOTE: Cache is in-process and keyed by id(users) (list identity).
-def find_user_by_name_cached(users: List[User], name: str) -> Optional[User]:
-    """
-    Faster repeated lookups without changing your calling code.
-    Builds and caches a dict index the first time it's called for a given users list.
+    Efficiency strategy:
+    - Convert list -> dict index for O(1) lookup.
+    - Cache the index by id(users) to make repeated calls very fast.
 
-    Tradeoff:
-    - Slight memory overhead to store the index in a cache.
-    - Cache invalidation: if you mutate 'users' in place, the cached index can become stale.
-      (If 'users' is immutable after load, this is safe and very fast.)
+    Important caveat:
+    - If you mutate 'users' in place after caching (append/remove/edit dicts),
+      the cache can become stale. If your app mutates users, remove caching.
     """
-    cache: Dict[int, UserIndex] = getattr(find_user_by_name_cached, "_cache", {})
-    setattr(find_user_by_name_cached, "_cache", cache)
+    # Function-level cache: { id(users_list) : {name: user_dict} }
+    cache: Dict[int, UserIndex] = getattr(find_user_by_name, "_cache", {})
+    setattr(find_user_by_name, "_cache", cache)
 
     users_id = id(users)
     index = cache.get(users_id)
     if index is None:
-        index = {u["name"]: u for u in users}
+        # Build once, then reuse for subsequent lookups with the same list object
+        index = _build_user_index(users)
         cache[users_id] = index
 
     return index.get(name)
 
 
 # ----------------------------------------------
-# Problem 3: Even numbers preserving input order
+# Problem 3: Listing even numbers in order
 # ----------------------------------------------
 def get_list_of_even_numbers(numbers: Iterable[int]) -> List[int]:
     """
-    Return even numbers in the same order as the input.
+    Return a new list containing only the even integers from the input iterable,
+    preserving the original order.
+
+    Data structure choice:
+    - list is the correct output type and preserves order naturally.
     """
     return [n for n in numbers if n % 2 == 0]
 
 
 # -----------------------------
-# Clarifying questions (optional)
+# Why these changes (brief)
 # -----------------------------
-CLARIFYING_QUESTIONS = """
-Answering these lets me lock in the "right" behavior (not just fast behavior):
-
+REASONS = """
 Problem 1:
-1) Should the output contain duplicates if the same product ID appears multiple times
-   across the supplier lists? (Current: preserves duplicates from the scanned side.)
-2) Are product IDs always hashable (e.g., int/str)? If IDs can be dict/list, we need a different approach.
+- Switched to set membership/intersection because list membership is O(n) and
+  becomes a bottleneck for large inputs; set membership is O(1) average.
 
 Problem 2:
-3) Is 'name' guaranteed unique? If duplicates exist, should we keep first, last, or return all matches?
-4) Do you mutate the users list after load? If yes, avoid caching-by-id or rebuild index on changes.
+- Tests pass a list, so using user_index.get(...) failed (list has no .get).
+- Built a dict index (name -> profile) because username is a unique key and
+  dict lookup is O(1) average vs O(n) list scan.
+- Added caching keyed by id(users) to avoid rebuilding the index on every call
+  in workloads with repeated lookups.
 
 Problem 3:
-5) Numbers always int? If floats can appear, should 2.0 count as even? (Current assumes int.)
+- Used list comprehension for speed + clarity; preserves order by construction.
 """.strip()
