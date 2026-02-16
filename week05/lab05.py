@@ -1,32 +1,4 @@
 """
-# Messy script to be refactored
-users = [
-    {"name": "alice", "age": 30, "is_active": True, "email": "alice@example.com"},
-    {"name": "bob", "age": 25, "is_active": False},
-    {"name": "charlie", "age": 35, "is_active": True, "email": "charlie@example.com"},
-    {"name": "david", "age": "unknown", "is_active": False}
-]
-
-# Calculate total age and count users for average
-total_age = 0
-user_count_for_age = 0
-for user in users:
-    if isinstance(user.get("age"), int):
-        total_age += user["age"]
-        user_count_for_age += 1
-average_age = total_age / user_count_for_age
-print(f"average user age: {average_age:.2f}")
-
-# Get a list of all active user emails
-active_user_emails = []
-for user in users:
-    if user.get("is_active") and user.get("email"):
-        active_user_emails.append(user["email"])
-print(f"active user emails: {active_user_emails}")
-
-"""
-
-"""
 lab05.py
 
 Refactored user-processing script with defensive input handling.
